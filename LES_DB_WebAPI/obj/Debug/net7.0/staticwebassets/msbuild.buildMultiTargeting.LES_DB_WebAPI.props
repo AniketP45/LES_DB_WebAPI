@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\LES_DB_WebAPI.props" />
+</Project>

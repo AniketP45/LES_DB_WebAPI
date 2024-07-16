@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\buildMultiTargeting\LES_DB_WebAPI.props" />
+</Project>

@@ -1,0 +1,11 @@
+{
+  "Version": 1,
+  "Hash": "G/gemgMEbD3jJ+8dNwVNeY8lzNh0+fLtKGR8eISo87Q=",
+  "Source": "LES_DB_WebAPI",
+  "BasePath": "_content/LES_DB_WebAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [],
+  "Assets": []
+}
