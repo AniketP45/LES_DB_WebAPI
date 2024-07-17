@@ -12,9 +12,12 @@ namespace LES_DB_WebAPI.Controllers
     public class DBController : ControllerBase
     {
         private readonly AppDbContext _context;
-        public DBController(AppDbContext context)
+        private readonly ILogger<DBController> _logger;
+
+        public DBController(AppDbContext context, ILogger<DBController> logger)
         {
             _context = context;
+            _logger = logger;
         }
 
 
@@ -41,7 +44,7 @@ namespace LES_DB_WebAPI.Controllers
 
                 var SendMailQueueDto = new SendMailQueueDto
                 {
-                    QuotationId= sendMailQueue.QuotationId,
+                    QuotationId = sendMailQueue.QuotationId,
                     QuoteExported = sendMailQueue.QuoteExported,
                     DocType = sendMailQueue.DocType,
                     RefKey = sendMailQueue.RefKey,
@@ -64,7 +67,7 @@ namespace LES_DB_WebAPI.Controllers
                     SendHtmlMsg = sendMailQueue.SendHtmlMsg,
                     UseHtmlFileMsg = sendMailQueue.UseHtmlFileMsg,
                     DelayMailMin = sendMailQueue.DelayMailMin,
-                    Module=sendMailQueue.Module,
+                    Module = sendMailQueue.Module,
                     SuppRef = sendMailQueue.SuppRef,
                     ByrCode = sendMailQueue.ByrCode,
                     SuppCode = sendMailQueue.SuppCode,
@@ -77,12 +80,12 @@ namespace LES_DB_WebAPI.Controllers
             }
             catch (DbUpdateException ex)
             {
-               
+                _logger.LogError("Error on PostSendMailQueue - " + ex.Message);
                 return StatusCode(500, "Internal server error. Please try again later.");
             }
             catch (Exception ex)
             {
-                
+                _logger.LogError("Error on PostSendMailQueue - " + ex.Message);
                 return StatusCode(500, "An unexpected error occurred. Please try again later.");
             }
         }
@@ -93,8 +96,11 @@ namespace LES_DB_WebAPI.Controllers
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> PostAuditLog(SMAuditLog auditLog)
         {
+            //_logger.LogInformation("PostAuditLog method called.");
+
             if (auditLog == null)
             {
+                _logger.LogError("AuditLog object is null");
                 return BadRequest("AuditLog object is null");
             }
 
@@ -107,6 +113,8 @@ namespace LES_DB_WebAPI.Controllers
             {
                 await _context.AuditLogs.AddAsync(auditLog);
                 await _context.SaveChangesAsync();
+                //_logger.LogInformation("AuditLog object Added to database");
+
 
                 var auditLogDto = new SMAuditLogDto
                 {
@@ -133,12 +141,12 @@ namespace LES_DB_WebAPI.Controllers
             }
             catch (DbUpdateException ex)
             {
-
+                _logger.LogError("Error on PostAuditLog - " + ex.Message);
                 return StatusCode(500, "Internal server error. Please try again later.");
             }
             catch (Exception ex)
             {
-
+                _logger.LogError("Error on PostAuditLog - " + ex.Message);
                 return StatusCode(500, "An unexpected error occurred. Please try again later.");
             }
         }
