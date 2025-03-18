@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("LES_DB_WebAPI")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+25c912de83ae727d607d46f859d98d40dec93aa0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+58930d539e659ed3a84569ae2f1bd9d88176674d")]
 [assembly: System.Reflection.AssemblyProductAttribute("LES_DB_WebAPI")]
 [assembly: System.Reflection.AssemblyTitleAttribute("LES_DB_WebAPI")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

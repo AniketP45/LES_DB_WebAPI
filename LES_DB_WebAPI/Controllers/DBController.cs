@@ -1,23 +1,22 @@
 ﻿using LES_DB_WebAPI.Data;
 using LES_DB_WebAPI.Models;
 using LES_DB_WebAPI.Models.DTO;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
 
-namespace LES_DB_WebAPI.Controllers
+namespace LES_DB_WebAPI.Controllers 
 {
     [Route("api/DB")]
     [ApiController]
     public class DBController : ControllerBase
     {
         private readonly AppDbContext _context;
-        private readonly ILogger<DBController> _logger;
 
-        public DBController(AppDbContext context, ILogger<DBController> logger)
+        public DBController(AppDbContext context)
         {
             _context = context;
-            _logger = logger;
         }
 
 
@@ -36,6 +35,9 @@ namespace LES_DB_WebAPI.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            setLog("Request recived for - " + sendMailQueue.QuotationId);
+
 
             try
             {
@@ -75,32 +77,35 @@ namespace LES_DB_WebAPI.Controllers
                     Udf1 = sendMailQueue.Udf1
                 };
 
+                setLog("Data saved for - " + sendMailQueue.QuotationId);
+
 
                 return CreatedAtAction(nameof(PostSendMailQueue), SendMailQueueDto);
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError("Error on PostSendMailQueue - " + ex.Message);
+                setLog("Error on PostSendMailQueue - " + ex.Message);
                 return StatusCode(500, "Internal server error. Please try again later.");
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error on PostSendMailQueue - " + ex.Message);
+                setLog("Error on PostSendMailQueue - " + ex.Message);
                 return StatusCode(500, "An unexpected error occurred. Please try again later.");
             }
         }
 
         [HttpPost("auditlog")]
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult> PostAuditLog(SMAuditLog auditLog)
         {
-            //_logger.LogInformation("PostAuditLog method called.");
+            setLog("---------------------------------------------");
 
             if (auditLog == null)
             {
-                _logger.LogError("AuditLog object is null");
+                setLog("AuditLog object is null");
                 return BadRequest("AuditLog object is null");
             }
 
@@ -113,7 +118,7 @@ namespace LES_DB_WebAPI.Controllers
             {
                 await _context.AuditLogs.AddAsync(auditLog);
                 await _context.SaveChangesAsync();
-                //_logger.LogInformation("AuditLog object Added to database");
+                setLog("AuditLog object Added to database");
 
 
                 var auditLogDto = new SMAuditLogDto
@@ -141,13 +146,31 @@ namespace LES_DB_WebAPI.Controllers
             }
             catch (DbUpdateException ex)
             {
-                _logger.LogError("Error on PostAuditLog - " + ex.Message);
+
+                setLog("Error on PostAuditLog - " + ex.Message +ex.InnerException.Message);
                 return StatusCode(500, "Internal server error. Please try again later.");
             }
             catch (Exception ex)
             {
-                _logger.LogError("Error on PostAuditLog - " + ex.Message);
+                setLog("Error on PostAuditLog - " + ex.Message);
                 return StatusCode(500, "An unexpected error occurred. Please try again later.");
+            }
+            finally
+            {
+                setLog("------------------------------------------");
+
+            }
+        }
+
+        public static void setLog(string log)
+        {
+            try
+            {
+                LeSDataMain.LeSDM.AddConsoleLog(log);
+            }
+            catch (Exception ex)
+            {
+
             }
         }
     }

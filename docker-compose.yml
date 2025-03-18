@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  les_db_webapi:
+    image: ${DOCKER_REGISTRY-}lesdbwebapi
+    build:
+      context: .
+      dockerfile: LES_DB_WebAPI/Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - sqlserver
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=sqlserver;Database=YourDatabase;User=sa;Password=sa;
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    ports:
+      - "1433:1433"
+    environment:
+      SA_PASSWORD: "sa"
+      ACCEPT_EULA: "sa"
+    volumes:
+      - sqlvolume:/var/opt/mssql
+
+volumes:
+  sqlvolume:
+    driver: local

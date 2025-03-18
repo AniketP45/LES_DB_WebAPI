@@ -18,7 +18,6 @@ namespace LES_DB_WebAPI.Models
         public string? ModuleName { get; set; }
 
         [Column("FileName")] // 4
-        [StringLength(255)]
         public string? FileName { get; set; }
 
         [Column("AuditValue")] //7

@@ -1,0 +1,49 @@
+name: dockercompose274623685197299619
+services:
+  les_db_webapi:
+    build:
+      context: C:\Aniket\Project\LES_DB_WebAPI
+      dockerfile: LES_DB_WebAPI/Dockerfile
+    depends_on:
+      sqlserver:
+        condition: service_started
+        required: true
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: Server=sqlserver;Database=YourDatabase;User=sa;Password=sa;
+    image: lesdbwebapi
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 80
+        published: "8080"
+        protocol: tcp
+      - mode: ingress
+        target: 80
+        protocol: tcp
+  sqlserver:
+    container_name: sqlserver
+    environment:
+      ACCEPT_EULA: sa
+      SA_PASSWORD: sa
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    networks:
+      default: null
+    ports:
+      - mode: ingress
+        target: 1433
+        published: "1433"
+        protocol: tcp
+    volumes:
+      - type: volume
+        source: sqlvolume
+        target: /var/opt/mssql
+        volume: {}
+networks:
+  default:
+    name: dockercompose274623685197299619_default
+volumes:
+  sqlvolume:
+    name: dockercompose274623685197299619_sqlvolume
+    driver: local
